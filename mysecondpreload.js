@@ -5,18 +5,25 @@ function runPreload() {
         alert("Hello from a preload");
         FSBL.Clients.Logger.log("Init context and intent listeners");
     
-        const contextHandler = (context) => {
-            const {ticker = null} = context.id;
-            if(ticker) {
-                FSBL.Clients.Logger.log(`Received contest: `, context);
-                window.location.href = `https://finance.yahoo.com/chart/${ticker}`;
-            } else {
-                FSBL.Clients.Logger.error("context does not have a ticker key");
-            }
-        };
-    
-        fdc3.addIntentListener("ViewChart", contextHandler);
-        fdc3.addContextListener("fdc3.instrument", contextHandler);
+        try{
+            const contextHandler = (context) => {
+                const {ticker = null} = context.id;
+                if(ticker) {
+                    FSBL.Clients.Logger.log(`Received context: `, context);
+                    window.location.href = `https://finance.yahoo.com/chart/${ticker}`;
+                } else {
+                    FSBL.Clients.Logger.error("context does not have a ticker key");
+                }
+            };
+        
+            fdc3.addIntentListener("ViewChart", contextHandler);
+            fdc3.addContextListener("fdc3.instrument", contextHandler);
+
+        } catch (err){
+            FSBL.Clients.Logger.log(`Unknown Error: `, err);
+        }
+
+       
     }
     
     // this code ensures that the FSBL library has been initialized
